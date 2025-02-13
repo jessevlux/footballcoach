@@ -1,13 +1,24 @@
+"use client";
+import { useEffect, useState } from "react";
+
 export default function ARPage() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://apps.8thwall.com/xrweb?appKey=YOUR_APP_KEY";
+    script.async = true;
+    script.onload = () => setLoaded(true); // Check if the script loads
+    document.body.appendChild(script);
+  }, []);
+
   return (
-    <div className="grid grid-cols-4 gap-4 w-full h-screen bg-slate-300 max-w-sm mx-auto">
-      <a
-        rel="ar"
-        href="/models/teapot.usdz"
-        className="text-blue-600 underline text-xl col-start-2 col-span-2 self-center justify-self-center"
-      >
-        View Teapot in AR
-      </a>
+    <div className="flex flex-col items-center justify-center h-screen bg-slate-300">
+      {loaded ? (
+        <p className="text-green-600">✅ 8th Wall Loaded</p>
+      ) : (
+        <p className="text-red-600">⏳ Loading 8th Wall...</p>
+      )}
     </div>
   );
 }
