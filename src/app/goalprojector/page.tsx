@@ -8,7 +8,7 @@ export default function GoalProjector() {
   return (
     <div className="flex justify-center items-center w-full bg-zinc-900">
       <div className="w-[80vw] h-[80vh] bg-[url('/goal1.svg')] bg-contain bg-no-repeat bg-center">
-        <div className="grid grid-cols-4 grid-rows-3 gap-4 bg-[#ffffff54] mt-10 h-[75%] w-[80%] mx-auto">
+        <div className="grid grid-cols-4 grid-rows-3 gap-4 mt-10 h-[75%] w-[80%] mx-auto">
           {Array.from({ length: 12 }, (_, index) => (
             <div
               key={index}
