@@ -1,13 +1,234 @@
 "use client";
 import { useData } from "../components/DataContext";
+import { useTheme } from "../components/ThemeContext";
+import { useState } from "react";
+import SettingsTab from "../components/SettingsTab";
+
+type Tab = "home" | "stats" | "settings";
 
 export default function MobileApp() {
   const { shots, latestShot } = useData();
+  const { darkMode } = useTheme();
+  const [currentTab, setCurrentTab] = useState<Tab>("home");
+
+  const renderContent = () => {
+    switch (currentTab) {
+      case "settings":
+        return <SettingsTab />;
+      case "stats":
+        return (
+          <div className={`p-4 ${darkMode ? "text-white" : "text-gray-800"}`}>
+            Stats page coming soon...
+          </div>
+        );
+      default:
+        return (
+          <>
+            {/* Latest Shot Card */}
+            {latestShot && (
+              <div
+                className={`m-4 p-5 ${
+                  darkMode ? "bg-zinc-800" : "bg-white"
+                } rounded-2xl shadow-lg border ${
+                  darkMode ? "border-zinc-700" : "border-gray-100"
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h2
+                    className={`text-lg font-semibold ${
+                      darkMode ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    Latest Shot
+                  </h2>
+                  <span
+                    className={`text-xs ${
+                      darkMode
+                        ? "bg-blue-900/50 text-blue-200"
+                        : "bg-blue-100 text-blue-800"
+                    } px-2 py-1 rounded-full`}
+                  >
+                    {latestShot.timestamp.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div
+                    className={`${
+                      darkMode ? "bg-zinc-700" : "bg-gray-50"
+                    } p-3 rounded-xl`}
+                  >
+                    <p
+                      className={`text-sm ${
+                        darkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Speed
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${
+                        darkMode ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      {latestShot.speed} km/h
+                    </p>
+                  </div>
+                  <div
+                    className={`${
+                      darkMode ? "bg-zinc-700" : "bg-gray-50"
+                    } p-3 rounded-xl`}
+                  >
+                    <p
+                      className={`text-sm ${
+                        darkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Target
+                    </p>
+                    <div className="flex flex-col">
+                      <p
+                        className={`text-xl font-bold ${
+                          darkMode ? "text-white" : "text-gray-800"
+                        }`}
+                      >
+                        Zone {latestShot.targetIndex + 1}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          latestShot.accuracy === "Good"
+                            ? "text-green-500"
+                            : "text-orange-500"
+                        }`}
+                      >
+                        Hit Zone {latestShot.actualIndex + 1}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className={`${
+                      darkMode ? "bg-zinc-700" : "bg-gray-50"
+                    } p-3 rounded-xl`}
+                  >
+                    <p
+                      className={`text-sm ${
+                        darkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Accuracy
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${
+                        latestShot.accuracy === "Good"
+                          ? "text-green-500"
+                          : "text-orange-500"
+                      }`}
+                    >
+                      {latestShot.accuracy}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Shot History */}
+            <div className="px-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2
+                  className={`text-lg font-semibold ${
+                    darkMode ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  Shot History
+                </h2>
+                <span
+                  className={`text-sm ${
+                    darkMode ? "text-zinc-400" : "text-gray-500"
+                  }`}
+                >
+                  {shots.length} shots
+                </span>
+              </div>
+
+              <div className="space-y-3 overflow-auto max-h-[350px] pr-2">
+                {shots
+                  .slice()
+                  .reverse()
+                  .map((shot, index) => (
+                    <div
+                      key={index}
+                      className={`${
+                        darkMode
+                          ? "bg-zinc-800 border-zinc-700"
+                          : "bg-white border-gray-100"
+                      } p-4 rounded-xl border shadow-sm flex justify-between items-center`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              shot.accuracy === "Good"
+                                ? "bg-green-500"
+                                : "bg-orange-500"
+                            }`}
+                          />
+                          <span
+                            className={`text-sm font-medium ${
+                              darkMode ? "text-white" : "text-gray-800"
+                            }`}
+                          >
+                            Target {shot.targetIndex + 1} → Hit{" "}
+                            {shot.actualIndex + 1}
+                          </span>
+                        </div>
+                        <p
+                          className={`text-xs ${
+                            darkMode ? "text-zinc-400" : "text-gray-500"
+                          }`}
+                        >
+                          {shot.timestamp.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p
+                          className={`text-sm font-semibold ${
+                            darkMode ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {shot.speed} km/h
+                        </p>
+                        <p
+                          className={`text-xs ${
+                            shot.accuracy === "Good"
+                              ? "text-green-500"
+                              : "text-orange-500"
+                          }`}
+                        >
+                          {shot.accuracy}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </>
+        );
+    }
+  };
 
   return (
-    <div className="w-[360px] h-[720px] bg-gray-50 rounded-[3rem] shadow-2xl overflow-hidden border-[14px] border-gray-900 relative">
+    <div
+      className={`mx-auto w-[360px] h-[720px] ${
+        darkMode ? "bg-zinc-900" : "bg-gray-50"
+      } rounded-[3rem] shadow-2xl overflow-hidden border-[14px] border-black relative md:scale-[0.8] scale-[0.85] md:origin-top`}
+    >
       {/* Status Bar */}
-      <div className="bg-gray-900 text-white px-6 py-2 flex justify-between items-center text-sm">
+      <div className="bg-zinc-900 text-white px-6 py-2 flex justify-between items-center text-sm">
         <span>9:41</span>
         <div className="w-[120px] h-[25px] bg-black absolute top-0 left-1/2 transform -translate-x-1/2 rounded-b-2xl" />
         <div className="flex gap-2">
@@ -17,111 +238,32 @@ export default function MobileApp() {
       </div>
 
       {/* App Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Football Coach</h1>
+      <div className=" p-6 text-white">
+        <h1 className="text-2xl text-blue-600 font-bold mb-2">
+          Football Coach
+        </h1>
         <p className="text-blue-100 text-sm">Track your shooting progress</p>
       </div>
 
-      {/* Latest Shot Card */}
-      {latestShot && (
-        <div className="m-4 p-5 bg-white rounded-2xl shadow-lg border border-gray-100">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Latest Shot</h2>
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-              {latestShot.timestamp.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-3 rounded-xl">
-              <p className="text-sm text-gray-500">Speed</p>
-              <p className="text-xl font-bold text-gray-800">
-                {latestShot.speed} km/h
-              </p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-xl">
-              <p className="text-sm text-gray-500">Target</p>
-              <p className="text-xl font-bold text-gray-800">
-                Zone {latestShot.targetIndex + 1}
-              </p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-xl">
-              <p className="text-sm text-gray-500">Accuracy</p>
-              <p
-                className={`text-xl font-bold ${
-                  latestShot.accuracy === "Good"
-                    ? "text-green-600"
-                    : "text-orange-600"
-                }`}
-              >
-                {latestShot.accuracy}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Shot History */}
-      <div className="px-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Shot History</h2>
-          <span className="text-sm text-gray-500">{shots.length} shots</span>
-        </div>
-
-        <div className="space-y-3 overflow-auto max-h-[350px] pr-2">
-          {shots
-            .slice()
-            .reverse()
-            .map((shot, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        shot.accuracy === "Good"
-                          ? "bg-green-500"
-                          : "bg-orange-500"
-                      }`}
-                    />
-                    <span className="text-sm font-medium text-gray-800">
-                      Zone {shot.targetIndex + 1}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {shot.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-800">
-                    {shot.speed} km/h
-                  </p>
-                  <p
-                    className={`text-xs ${
-                      shot.accuracy === "Good"
-                        ? "text-green-600"
-                        : "text-orange-600"
-                    }`}
-                  >
-                    {shot.accuracy}
-                  </p>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
+      {/* Main Content */}
+      {renderContent()}
 
       {/* Bottom Navigation */}
-      <div className="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center">
-        <button className="text-blue-600">
+      <div
+        className={`absolute bottom-0 w-full ${
+          darkMode ? "bg-zinc-800 border-zinc-700" : "bg-white border-gray-100"
+        } border-t px-6 py-4 flex justify-between items-center`}
+      >
+        <button
+          onClick={() => setCurrentTab("home")}
+          className={`${
+            currentTab === "home"
+              ? "text-blue-500"
+              : darkMode
+              ? "text-zinc-400"
+              : "text-zinc-600"
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -137,7 +279,16 @@ export default function MobileApp() {
             />
           </svg>
         </button>
-        <button className="text-blue-600">
+        <button
+          onClick={() => setCurrentTab("stats")}
+          className={`${
+            currentTab === "stats"
+              ? "text-blue-500"
+              : darkMode
+              ? "text-zinc-400"
+              : "text-zinc-600"
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -153,7 +304,16 @@ export default function MobileApp() {
             />
           </svg>
         </button>
-        <button className="text-blue-600">
+        <button
+          onClick={() => setCurrentTab("settings")}
+          className={`${
+            currentTab === "settings"
+              ? "text-blue-500"
+              : darkMode
+              ? "text-zinc-400"
+              : "text-zinc-600"
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

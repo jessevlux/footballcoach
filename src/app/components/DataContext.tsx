@@ -10,6 +10,7 @@ import {
 type Shot = {
   timestamp: Date;
   targetIndex: number;
+  actualIndex: number;
   speed: number;
   accuracy: string;
 };
