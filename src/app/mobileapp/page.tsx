@@ -91,19 +91,12 @@ export default function MobileApp() {
                     <div className="flex flex-col">
                       <p
                         className={`text-xl font-bold ${
-                          darkMode ? "text-white" : "text-gray-800"
-                        }`}
-                      >
-                        Zone {latestShot.targetIndex + 1}
-                      </p>
-                      <p
-                        className={`text-sm ${
                           latestShot.accuracy === "Good"
                             ? "text-green-500"
                             : "text-orange-500"
                         }`}
                       >
-                        Hit Zone {latestShot.actualIndex + 1}
+                        {latestShot.accuracy === "Good" ? "Hit!" : "Missed"}
                       </p>
                     </div>
                   </div>
@@ -152,7 +145,7 @@ export default function MobileApp() {
                 </span>
               </div>
 
-              <div className="space-y-3 overflow-auto max-h-[350px] pr-2">
+              <div className="space-y-3 overflow-y-auto max-h-[350px] pr-2 no-scrollbar">
                 {shots
                   .slice()
                   .reverse()
@@ -179,8 +172,9 @@ export default function MobileApp() {
                               darkMode ? "text-white" : "text-gray-800"
                             }`}
                           >
-                            Target {shot.targetIndex + 1} → Hit{" "}
-                            {shot.actualIndex + 1}
+                            {shot.accuracy === "Good"
+                              ? "Target Hit"
+                              : "Target Missed"}
                           </span>
                         </div>
                         <p
@@ -228,7 +222,13 @@ export default function MobileApp() {
       } rounded-[3rem] shadow-2xl overflow-hidden border-[14px] border-black relative md:scale-[0.8] scale-[0.85] md:origin-top`}
     >
       {/* Status Bar */}
-      <div className="bg-zinc-900 text-white px-6 py-2 flex justify-between items-center text-sm">
+      <div
+        className={`${
+          darkMode
+            ? "bg-gradient-to-b from-black/50 to-transparent text-white font-semibold"
+            : "bg-gradient-to-b from-black/30 to-transparent text-black font-semibold"
+        } px-6 py-2 flex justify-between items-center text-sm`}
+      >
         <span>9:41</span>
         <div className="w-[120px] h-[25px] bg-black absolute top-0 left-1/2 transform -translate-x-1/2 rounded-b-2xl" />
         <div className="flex gap-2">
@@ -242,7 +242,9 @@ export default function MobileApp() {
         <h1 className="text-2xl text-blue-600 font-bold mb-2">
           Football Coach
         </h1>
-        <p className="text-blue-100 text-sm">Track your shooting progress</p>
+        <p className={`${darkMode ? "text-white" : "text-black"} text-sm`}>
+          Track your shooting progress
+        </p>
       </div>
 
       {/* Main Content */}
