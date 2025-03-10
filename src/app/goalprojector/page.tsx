@@ -29,7 +29,11 @@ function GoalProjectorContent() {
     const target = getZoneCenter(targetIndex);
 
     // Increase randomness (up to 60% of a zone size away from target)
+<<<<<<< Updated upstream
     const randomOffset = () => (Math.random() - 0.5) * 0.3;
+=======
+    const randomOffset = () => (Math.random() - 0.5) * 0.4;
+>>>>>>> Stashed changes
     const shotX = Math.max(0, Math.min(1, target.x + randomOffset()));
     const shotY = Math.max(0, Math.min(1, target.y + randomOffset()));
 
@@ -67,6 +71,7 @@ function GoalProjectorContent() {
 
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen bg-zinc-900 p-8">
+<<<<<<< Updated upstream
       <div className="w-[80vw] h-[80vh] bg-[url('/goal1.svg')] bg-contain bg-no-repeat bg-center relative">
         {/* Grid overlay */}
         <div className="absolute inset-0">
@@ -77,6 +82,34 @@ function GoalProjectorContent() {
                 className={`h-full w-full ${
                   index === targetIndex ? "bg-blue-500/80" : "bg-transparent"
                 } `}
+=======
+      <div className="w-[80vw] h-[80vh] relative">
+        <img
+          src="/goal1.svg"
+          alt="Soccer goal"
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+        />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="grid grid-cols-4 grid-rows-3 h-[75%] w-[80%]"
+            style={{
+              aspectRatio: "4/3",
+              width: "80%",
+              height: "75%",
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateRows: "repeat(3, 1fr)",
+            }}
+          >
+            {Array.from({ length: 12 }, (_, index) => (
+              <div
+                key={index}
+                className={` ${
+                  index === targetIndex ? "bg-blue-500/80" : "bg-transparent"
+                } `}
+                style={{ aspectRatio: "16:9", width: "auto", height: "100%" }}
+>>>>>>> Stashed changes
               />
             ))}
           </div>
@@ -85,7 +118,11 @@ function GoalProjectorContent() {
         {/* Shot marker */}
         {showShot && shotPosition && (
           <div
+<<<<<<< Updated upstream
             className="absolute w-8 h-8 transform -translate-x-1/2 -translate-y-1/2"
+=======
+            className="absolute w-10 h-10 transform -translate-x-1/2 -translate-y-1/2"
+>>>>>>> Stashed changes
             style={{
               left: `${shotPosition.x * 80 + 10}%`,
               top: `${shotPosition.y * 75 + 12.5}%`,
