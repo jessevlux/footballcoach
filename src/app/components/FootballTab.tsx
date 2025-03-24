@@ -66,40 +66,54 @@ export default function FootballTab() {
   // Initialiseer de Cast API
   const initializeCastApi = () => {
     try {
-      castContext.current =
-        window.chrome.cast.framework.CastContext.getInstance();
-      castContext.current.setOptions({
-        receiverApplicationId: "CC1AD845", // Default Receiver App ID
-        autoJoinPolicy: window.chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
-      });
+      // Controleer of de Cast SDK volledig is geladen
+      if (
+        window.chrome &&
+        window.chrome.cast &&
+        window.chrome.cast.framework &&
+        window.chrome.cast.framework.CastContext
+      ) {
+        castContext.current =
+          window.chrome.cast.framework.CastContext.getInstance();
+        castContext.current.setOptions({
+          receiverApplicationId: "CC1AD845", // Default Receiver App ID
+          autoJoinPolicy: window.chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
+        });
 
-      // Luister naar sessie status veranderingen
-      castContext.current.addEventListener(
-        window.chrome.cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-        (event: any) => {
-          const session = castContext.current.getCurrentSession();
-          castSession.current = session;
+        // Luister naar sessie status veranderingen
+        castContext.current.addEventListener(
+          window.chrome.cast.framework.CastContextEventType
+            .SESSION_STATE_CHANGED,
+          (event: any) => {
+            const session = castContext.current.getCurrentSession();
+            castSession.current = session;
 
-          if (
-            event.sessionState === window.chrome.cast.SessionState.CONNECTED
-          ) {
-            setIsCasting(true);
-            // Stuur de URL van de goalprojector naar de ontvanger
-            sendMessage({
-              type: "LOAD",
-              url: `${window.location.origin}/goalprojector`,
-            });
-          } else if (
-            event.sessionState === window.chrome.cast.SessionState.DISCONNECTED
-          ) {
-            setIsCasting(false);
+            if (
+              event.sessionState === window.chrome.cast.SessionState.CONNECTED
+            ) {
+              setIsCasting(true);
+              // Stuur de URL van de goalprojector naar de ontvanger
+              sendMessage({
+                type: "LOAD",
+                url: `${window.location.origin}/goalprojector`,
+              });
+            } else if (
+              event.sessionState ===
+              window.chrome.cast.SessionState.DISCONNECTED
+            ) {
+              setIsCasting(false);
+            }
           }
-        }
-      );
+        );
 
-      setCastAvailable(true);
+        setCastAvailable(true);
+      } else {
+        console.log("Cast SDK not fully loaded yet");
+        setCastAvailable(false);
+      }
     } catch (error) {
       console.error("Error initializing Cast API:", error);
+      setCastAvailable(false);
     }
   };
 
