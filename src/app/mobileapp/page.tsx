@@ -4,26 +4,25 @@ import { useTheme } from "../components/ThemeContext";
 import { useState } from "react";
 import SettingsTab from "../components/SettingsTab";
 import SensorTab from "../components/SensorTab";
+import CommunityTab from "../components/CommunityTab";
+import FootballTab from "../components/FootballTab";
 
-type Tab = "home" | "stats" | "settings" | "sensor";
+type Tab = "home" | "stats" | "sensor" | "football";
 
 export default function MobileApp() {
   const { shots, latestShot } = useData();
   const { darkMode } = useTheme();
   const [currentTab, setCurrentTab] = useState<Tab>("home");
+  const [showSettings, setShowSettings] = useState(false);
 
   const renderContent = () => {
     switch (currentTab) {
-      case "settings":
-        return <SettingsTab />;
       case "stats":
-        return (
-          <div className={`p-4 ${darkMode ? "text-white" : "text-gray-800"}`}>
-            Stats page coming soon...
-          </div>
-        );
+        return <CommunityTab isMobile={true} />;
       case "sensor":
         return <SensorTab />;
+      case "football":
+        return <FootballTab />;
       default:
         return (
           <>
@@ -89,17 +88,11 @@ export default function MobileApp() {
                         darkMode ? "text-zinc-400" : "text-gray-500"
                       }`}
                     >
-                      Target
+                      Points
                     </p>
                     <div className="flex flex-col">
-                      <p
-                        className={`text-xl font-bold ${
-                          latestShot.accuracy === "Good"
-                            ? "text-green-500"
-                            : "text-orange-500"
-                        }`}
-                      >
-                        {latestShot.accuracy === "Good" ? "Hit!" : "Missed"}
+                      <p className={`text-xl font-bold text-yellow-500`}>
+                        {latestShot.points || 0}
                       </p>
                     </div>
                   </div>
@@ -117,101 +110,69 @@ export default function MobileApp() {
                     </p>
                     <p
                       className={`text-xl font-bold ${
-                        latestShot.accuracy === "Good"
+                        latestShot.accuracy === "Bullseye"
+                          ? "text-yellow-500"
+                          : latestShot.accuracy === "Excellent"
                           ? "text-green-500"
-                          : "text-orange-500"
+                          : latestShot.accuracy === "Good"
+                          ? "text-blue-500"
+                          : latestShot.accuracy === "Fair"
+                          ? "text-orange-500"
+                          : "text-red-500"
                       }`}
                     >
                       {latestShot.accuracy}
+                    </p>
+                  </div>
+                  <div
+                    className={`${
+                      darkMode ? "bg-zinc-700" : "bg-gray-50"
+                    } p-3 rounded-xl`}
+                  >
+                    <p
+                      className={`text-sm ${
+                        darkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Target
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${
+                        latestShot.points > 0
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {latestShot.points > 0 ? "Hit!" : "Missed"}
                     </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Shot History */}
-            <div className="px-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2
-                  className={`text-lg font-semibold ${
-                    darkMode ? "text-white" : "text-gray-800"
-                  }`}
-                >
-                  Shot History
-                </h2>
-                <span
-                  className={`text-sm ${
-                    darkMode ? "text-zinc-400" : "text-gray-500"
-                  }`}
-                >
-                  {shots.length} shots
-                </span>
-              </div>
-
-              <div className="space-y-3 overflow-y-auto max-h-[350px] pr-2 no-scrollbar">
-                {shots
-                  .slice()
-                  .reverse()
-                  .map((shot, index) => (
-                    <div
-                      key={index}
-                      className={`${
-                        darkMode
-                          ? "bg-zinc-800 border-zinc-700"
-                          : "bg-white border-gray-100"
-                      } p-4 rounded-xl border shadow-sm flex justify-between items-center`}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              shot.accuracy === "Good"
-                                ? "bg-green-500"
-                                : "bg-orange-500"
-                            }`}
-                          />
-                          <span
-                            className={`text-sm font-medium ${
-                              darkMode ? "text-white" : "text-gray-800"
-                            }`}
-                          >
-                            {shot.accuracy === "Good"
-                              ? "Target Hit"
-                              : "Target Missed"}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-xs ${
-                            darkMode ? "text-zinc-400" : "text-gray-500"
-                          }`}
-                        >
-                          {shot.timestamp.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p
-                          className={`text-sm font-semibold ${
-                            darkMode ? "text-white" : "text-gray-800"
-                          }`}
-                        >
-                          {shot.speed} km/h
-                        </p>
-                        <p
-                          className={`text-xs ${
-                            shot.accuracy === "Good"
-                              ? "text-green-500"
-                              : "text-orange-500"
-                          }`}
-                        >
-                          {shot.accuracy}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+            {/* Voeg een welkomstbericht toe */}
+            <div
+              className={`m-4 p-5 ${
+                darkMode ? "bg-zinc-800" : "bg-white"
+              } rounded-2xl shadow-lg border ${
+                darkMode ? "border-zinc-700" : "border-gray-100"
+              }`}
+            >
+              <h2
+                className={`text-lg font-semibold mb-2 ${
+                  darkMode ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Welcome to Football Coach
+              </h2>
+              <p
+                className={`text-sm ${
+                  darkMode ? "text-zinc-400" : "text-gray-600"
+                }`}
+              >
+                Track your shooting progress and improve your skills with our
+                smart training tools.
+              </p>
             </div>
           </>
         );
@@ -241,17 +202,58 @@ export default function MobileApp() {
       </div>
 
       {/* App Header */}
-      <div className=" p-6 text-white">
-        <h1 className="text-2xl text-blue-600 font-bold mb-2">
-          Football Coach
-        </h1>
-        <p className={`${darkMode ? "text-white" : "text-black"} text-sm`}>
-          Track your shooting progress
-        </p>
+      <div className="p-6 text-white flex justify-between items-center">
+        {currentTab === "home" ? (
+          <>
+            <div>
+              <h1 className="text-2xl text-blue-600 font-bold mb-2">
+                Football Coach
+              </h1>
+              <p
+                className={`${darkMode ? "text-white" : "text-black"} text-sm`}
+              >
+                Track your shooting progress
+              </p>
+            </div>
+            <button
+              onClick={() => setShowSettings(true)}
+              className={`${darkMode ? "text-white" : "text-black"} p-2`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                />
+              </svg>
+            </button>
+          </>
+        ) : (
+          <h1
+            className={`text-xl font-bold ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            {currentTab === "football" && "Football Training"}
+            {currentTab === "stats" && "Community"}
+            {currentTab === "sensor" && "Sensor"}
+          </h1>
+        )}
       </div>
 
       {/* Main Content */}
-      {renderContent()}
+      {showSettings ? (
+        <SettingsTab onClose={() => setShowSettings(false)} />
+      ) : (
+        renderContent()
+      )}
 
       {/* Bottom Navigation */}
       <div
@@ -260,7 +262,10 @@ export default function MobileApp() {
         } border-t px-6 py-4 flex justify-between items-center`}
       >
         <button
-          onClick={() => setCurrentTab("home")}
+          onClick={() => {
+            setCurrentTab("home");
+            setShowSettings(false);
+          }}
           className={`${
             currentTab === "home"
               ? "text-blue-500"
@@ -281,6 +286,34 @@ export default function MobileApp() {
               strokeLinejoin="round"
               strokeWidth={2}
               d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={() => {
+            setCurrentTab("football");
+            setShowSettings(false);
+          }}
+          className={`${
+            currentTab === "football"
+              ? "text-blue-500"
+              : darkMode
+              ? "text-zinc-400"
+              : "text-zinc-600"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
         </button>
@@ -306,31 +339,6 @@ export default function MobileApp() {
               strokeLinejoin="round"
               strokeWidth={2}
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-        </button>
-        <button
-          onClick={() => setCurrentTab("settings")}
-          className={`${
-            currentTab === "settings"
-              ? "text-blue-500"
-              : darkMode
-              ? "text-zinc-400"
-              : "text-zinc-600"
-          }`}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
             />
           </svg>
         </button>

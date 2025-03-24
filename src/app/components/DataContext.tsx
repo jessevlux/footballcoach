@@ -13,6 +13,7 @@ type Shot = {
   actualIndex: number;
   speed: number;
   accuracy: string;
+  points: number;
 };
 
 type DataContextType = {

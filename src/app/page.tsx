@@ -3,6 +3,7 @@ import { useState } from "react";
 import GoalProjector from "./goalprojector/page";
 import MobileApp from "./mobileapp/page";
 import { DataProvider } from "./components/DataContext";
+import Link from "next/link";
 
 export default function Home() {
   const openGoalProjector = () => {
@@ -15,14 +16,7 @@ export default function Home() {
         <div className="relative">
           <MobileApp />
         </div>
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={openGoalProjector}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Open Goal Projector
-          </button>
-        </div>
+        <div className="flex flex-col gap-4"></div>
       </div>
     </DataProvider>
   );
