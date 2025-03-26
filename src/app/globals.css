@@ -34,3 +34,13 @@ body {
   background: var(--background);
   font-family: 'Poppins', sans-serif;
 }
+
+/* Google Cast Button styling */
+google-cast-launcher {
+  --connected-color: #4285f4;
+  --disconnected-color: #7b7b7b;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  cursor: pointer;
+}

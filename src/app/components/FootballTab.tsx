@@ -23,6 +23,14 @@ declare global {
         AutoJoinPolicy: {
           ORIGIN_SCOPED: string;
         };
+        media: {
+          MediaInfo: any;
+          LoadRequest: any;
+        };
+        SessionRequest: any;
+        ApiConfig: any;
+        initialize: any;
+        requestSession: any;
       };
     };
     __onGCastApiAvailable: ((isAvailable: boolean) => void) | null;
@@ -45,8 +53,14 @@ export default function FootballTab() {
 
   // Initialiseer Google Cast
   useEffect(() => {
+    console.log(
+      "Chrome cast beschikbaar?",
+      window.chrome && window.chrome.cast && window.chrome.cast.isAvailable
+    );
+
     // Wacht tot de Cast API beschikbaar is
     window["__onGCastApiAvailable"] = (isAvailable: boolean) => {
+      console.log("__onGCastApiAvailable callback:", isAvailable);
       if (isAvailable) {
         initializeCastApi();
       }
@@ -54,6 +68,7 @@ export default function FootballTab() {
 
     // Controleer of de Cast API al beschikbaar is
     if (window.chrome && window.chrome.cast && window.chrome.cast.isAvailable) {
+      console.log("Cast API is direct beschikbaar");
       initializeCastApi();
     }
 
@@ -66,55 +81,55 @@ export default function FootballTab() {
   // Initialiseer de Cast API
   const initializeCastApi = () => {
     try {
-      // Controleer of de Cast SDK volledig is geladen
-      if (
-        window.chrome &&
-        window.chrome.cast &&
-        window.chrome.cast.framework &&
-        window.chrome.cast.framework.CastContext
-      ) {
-        castContext.current =
-          window.chrome.cast.framework.CastContext.getInstance();
-        castContext.current.setOptions({
-          receiverApplicationId: "CC1AD845", // Default Receiver App ID
-          autoJoinPolicy: window.chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
-        });
+      console.log("Initialiseren van Cast API...");
 
-        // Luister naar sessie status veranderingen
-        castContext.current.addEventListener(
-          window.chrome.cast.framework.CastContextEventType
-            .SESSION_STATE_CHANGED,
-          (event: any) => {
-            const session = castContext.current.getCurrentSession();
-            castSession.current = session;
+      // Gebruik de standaard receiver app ID
+      const applicationID = "CC1AD845";
 
-            if (
-              event.sessionState === window.chrome.cast.SessionState.CONNECTED
-            ) {
-              setIsCasting(true);
-              // Stuur de URL van de goalprojector naar de ontvanger
-              sendMessage({
-                type: "LOAD",
-                url: `${window.location.origin}/goalprojector`,
-              });
-            } else if (
-              event.sessionState ===
-              window.chrome.cast.SessionState.DISCONNECTED
-            ) {
-              setIsCasting(false);
-            }
-          }
-        );
+      // Initialiseer de sessie request
+      const sessionRequest = new window.chrome.cast.SessionRequest(
+        applicationID
+      );
 
-        setCastAvailable(true);
-      } else {
-        console.log("Cast SDK not fully loaded yet");
-        setCastAvailable(false);
-      }
+      // Initialiseer de API config
+      const apiConfig = new window.chrome.cast.ApiConfig(
+        sessionRequest,
+        sessionListener,
+        receiverListener
+      );
+
+      // Initialiseer de Cast API
+      window.chrome.cast.initialize(apiConfig, onInitSuccess, onError);
     } catch (error) {
       console.error("Error initializing Cast API:", error);
       setCastAvailable(false);
     }
+  };
+
+  // Callback functies
+  const sessionListener = (session: any) => {
+    console.log("Nieuwe sessie:", session);
+    castSession.current = session;
+    setIsCasting(true);
+  };
+
+  const receiverListener = (availability: string) => {
+    console.log("Receiver beschikbaarheid:", availability);
+    if (availability === "available") {
+      setCastAvailable(true);
+    } else {
+      setCastAvailable(false);
+    }
+  };
+
+  const onInitSuccess = () => {
+    console.log("Cast API succesvol geïnitialiseerd");
+    setCastAvailable(true);
+  };
+
+  const onError = (error: any) => {
+    console.error("Cast API initialisatie fout:", error);
+    setCastAvailable(false);
   };
 
   // Start casting
@@ -150,15 +165,44 @@ export default function FootballTab() {
   // Stuur een bericht naar de ontvanger
   const sendMessage = (message: any) => {
     if (castSession.current) {
-      const namespace = "urn:x-cast:com.footballcoach.app";
-      castSession.current
-        .sendMessage(namespace, message)
-        .then(() => {
-          console.log("Message sent:", message);
-        })
-        .catch((error: any) => {
-          console.error("Error sending message:", error);
-        });
+      try {
+        if (castSession.current.window) {
+          // Stuur bericht naar het geopende venster
+          castSession.current.window.postMessage(
+            message,
+            window.location.origin
+          );
+          console.log("Message sent to window:", message);
+        } else if (castSession.current.media && castSession.current.media[0]) {
+          // Gebruik de media sessie om berichten te sturen
+          const namespace = "urn:x-cast:com.footballcoach.app";
+          castSession.current.media[0]
+            .sendMessage(namespace, message)
+            .then(() => {
+              console.log("Message sent via media:", message);
+            })
+            .catch((error: any) => {
+              console.error("Error sending message via media:", error);
+            });
+        } else if (castSession.current.sendMessage) {
+          // Probeer direct via de sessie te sturen
+          const namespace = "urn:x-cast:com.footballcoach.app";
+          castSession.current
+            .sendMessage(namespace, message)
+            .then(() => {
+              console.log("Message sent via session:", message);
+            })
+            .catch((error: any) => {
+              console.error("Error sending message via session:", error);
+            });
+        } else {
+          console.error("Geen methode gevonden om berichten te sturen");
+        }
+      } catch (error) {
+        console.error("Error in sendMessage:", error);
+      }
+    } else {
+      console.error("Geen cast sessie beschikbaar");
     }
   };
 
@@ -198,40 +242,82 @@ export default function FootballTab() {
           >
             Goal Projector
           </h3>
-          {castAvailable ? (
-            <button
-              onClick={toggleCasting}
-              className={`px-3 py-1 rounded text-sm flex items-center gap-2 ${
-                isCasting ? "bg-red-500 text-white" : "bg-blue-500 text-white"
-              }`}
+
+          {/* Cast Button */}
+          <button
+            onClick={() => {
+              if (window.chrome && window.chrome.cast) {
+                // Gebruik de standaard media receiver
+                const applicationID = "CC1AD845";
+
+                window.chrome.cast.requestSession(
+                  (session) => {
+                    console.log("Cast sessie gestart:", session);
+                    castSession.current = session;
+                    setIsCasting(true);
+
+                    // Cast een video
+                    const mediaInfo = new window.chrome.cast.media.MediaInfo(
+                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                      "video/mp4"
+                    );
+
+                    // Voeg metadata toe voor een betere weergave
+                    const metadata =
+                      new window.chrome.cast.media.GenericMediaMetadata();
+                    metadata.title = "Football Goal";
+                    metadata.subtitle = "Football Coach App";
+                    mediaInfo.metadata = metadata;
+
+                    const request = new window.chrome.cast.media.LoadRequest(
+                      mediaInfo
+                    );
+                    session.loadMedia(
+                      request,
+                      (mediaSession) => {
+                        console.log("Media geladen:", mediaSession);
+                        if (!castSession.current.media) {
+                          castSession.current.media = [];
+                        }
+                        castSession.current.media[0] = mediaSession;
+                      },
+                      (error) => {
+                        console.error("Media laden mislukt:", error);
+                      }
+                    );
+                  },
+                  (error) => {
+                    console.error("Cast sessie fout:", error);
+                  }
+                );
+              }
+            }}
+            className={`px-3 py-1 rounded text-sm flex items-center gap-2 ${
+              castAvailable
+                ? "bg-blue-500 text-white"
+                : "bg-gray-400 text-white cursor-not-allowed"
+            }`}
+            disabled={!castAvailable}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
-              >
-                <path
-                  d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="3" cy="20" r="1" fill="currentColor" />
-              </svg>
-              {isCasting ? "Stop Casting" : "Cast to Display"}
-            </button>
-          ) : (
-            <button
-              className="px-3 py-1 rounded text-sm bg-gray-400 text-white cursor-not-allowed"
-              disabled
-            >
-              Cast Unavailable
-            </button>
-          )}
+              <path
+                d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="3" cy="20" r="1" fill="currentColor" />
+            </svg>
+            Cast to Display
+          </button>
         </div>
 
         {isCasting ? (
@@ -275,7 +361,7 @@ export default function FootballTab() {
         )}
       </div>
 
-      {/* Shot History - verplaatst van home tab */}
+      {/* Shot History */}
       <div
         className={`p-4 rounded-lg ${darkMode ? "bg-zinc-800" : "bg-gray-100"}`}
       >

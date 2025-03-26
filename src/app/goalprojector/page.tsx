@@ -34,14 +34,30 @@ function GoalProjectorContent() {
   const { addShot } = useData();
 
   useEffect(() => {
-    // Controleer of we in een Cast ontvanger context zijn
-    const isChromecast =
-      window.location.href.includes("cast.google.com") ||
-      window.navigator.userAgent.includes("CrKey");
+    // Controleer of we in fullscreen mode moeten openen
+    const isFullscreen = window.location.href.includes("fullscreen=true");
 
-    if (isChromecast) {
-      setIsCastReceiver(true);
-      initializeCastReceiver();
+    if (isFullscreen) {
+      // Vraag fullscreen aan
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error("Fullscreen request failed:", err);
+      });
+    }
+
+    // Controleer of we in een ontvanger context zijn
+    const isSender = window.location.href.includes("sender=true");
+
+    if (isSender) {
+      console.log("Sender mode gedetecteerd");
+
+      // Luister naar berichten van de sender
+      window.addEventListener("message", (event) => {
+        // Controleer of het bericht van dezelfde oorsprong komt
+        if (event.origin === window.location.origin) {
+          console.log("Bericht ontvangen:", event.data);
+          handleCastMessage(event.data);
+        }
+      });
     }
 
     // Luister naar berichten van de Cast zender
