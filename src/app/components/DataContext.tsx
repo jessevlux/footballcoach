@@ -89,7 +89,7 @@ export function useData() {
 
 const updateChallengeProgress = (challengeId: string, progress: number) => {
   const storedChallenges = localStorage.getItem("activeChallenges");
-  let challenges = {};
+  let challenges: Record<string, any> = {};
 
   if (storedChallenges) {
     try {
