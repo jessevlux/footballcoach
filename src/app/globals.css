@@ -15,6 +15,23 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+  /* Touch scroll voor horizontale navigatie */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Voeg deze CSS toe voor betere drag-functionaliteit */
+  .overflow-x-auto.active {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+  }
+
+  .overflow-x-auto {
+    cursor: grab;
+    cursor: -webkit-grab;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 :root {

@@ -82,3 +82,26 @@ export function useData() {
   }
   return context;
 }
+
+// Voeg een functie toe om challenges bij te werken
+// Voeg deze toe aan de DataContext
+
+const updateChallengeProgress = (challengeId: string, progress: number) => {
+  const storedChallenges = localStorage.getItem("activeChallenges");
+  let challenges = {};
+
+  if (storedChallenges) {
+    try {
+      challenges = JSON.parse(storedChallenges);
+    } catch (e) {
+      console.error("Error parsing challenges:", e);
+    }
+  }
+
+  challenges[challengeId] = {
+    ...challenges[challengeId],
+    progress: progress,
+  };
+
+  localStorage.setItem("activeChallenges", JSON.stringify(challenges));
+};

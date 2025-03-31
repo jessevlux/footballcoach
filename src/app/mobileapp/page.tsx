@@ -1,7 +1,7 @@
 "use client";
 import { useData } from "../components/DataContext";
 import { useTheme } from "../components/ThemeContext";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import SettingsTab from "../components/SettingsTab";
 import SensorTab from "../components/SensorTab";
 import CommunityTab from "../components/CommunityTab";
@@ -24,158 +24,7 @@ export default function MobileApp() {
       case "football":
         return <FootballTab />;
       default:
-        return (
-          <>
-            {/* Latest Shot Card */}
-            {latestShot && (
-              <div
-                className={`m-4 p-5 ${
-                  darkMode ? "bg-zinc-800" : "bg-white"
-                } rounded-2xl shadow-lg border ${
-                  darkMode ? "border-zinc-700" : "border-gray-100"
-                }`}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h2
-                    className={`text-lg font-semibold ${
-                      darkMode ? "text-white" : "text-gray-800"
-                    }`}
-                  >
-                    Latest Shot
-                  </h2>
-                  <span
-                    className={`text-xs ${
-                      darkMode
-                        ? "bg-blue-900/50 text-blue-200"
-                        : "bg-blue-100 text-blue-800"
-                    } px-2 py-1 rounded-full`}
-                  >
-                    {latestShot.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div
-                    className={`${
-                      darkMode ? "bg-zinc-700" : "bg-gray-50"
-                    } p-3 rounded-xl`}
-                  >
-                    <p
-                      className={`text-sm ${
-                        darkMode ? "text-zinc-400" : "text-gray-500"
-                      }`}
-                    >
-                      Speed
-                    </p>
-                    <p
-                      className={`text-xl font-bold ${
-                        darkMode ? "text-white" : "text-gray-800"
-                      }`}
-                    >
-                      {latestShot.speed} km/h
-                    </p>
-                  </div>
-                  <div
-                    className={`${
-                      darkMode ? "bg-zinc-700" : "bg-gray-50"
-                    } p-3 rounded-xl`}
-                  >
-                    <p
-                      className={`text-sm ${
-                        darkMode ? "text-zinc-400" : "text-gray-500"
-                      }`}
-                    >
-                      Points
-                    </p>
-                    <div className="flex flex-col">
-                      <p className={`text-xl font-bold text-yellow-500`}>
-                        {latestShot.points || 0}
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className={`${
-                      darkMode ? "bg-zinc-700" : "bg-gray-50"
-                    } p-3 rounded-xl`}
-                  >
-                    <p
-                      className={`text-sm ${
-                        darkMode ? "text-zinc-400" : "text-gray-500"
-                      }`}
-                    >
-                      Accuracy
-                    </p>
-                    <p
-                      className={`text-xl font-bold ${
-                        latestShot.accuracy === "Bullseye"
-                          ? "text-yellow-500"
-                          : latestShot.accuracy === "Excellent"
-                          ? "text-green-500"
-                          : latestShot.accuracy === "Good"
-                          ? "text-blue-500"
-                          : latestShot.accuracy === "Fair"
-                          ? "text-orange-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {latestShot.accuracy}
-                    </p>
-                  </div>
-                  <div
-                    className={`${
-                      darkMode ? "bg-zinc-700" : "bg-gray-50"
-                    } p-3 rounded-xl`}
-                  >
-                    <p
-                      className={`text-sm ${
-                        darkMode ? "text-zinc-400" : "text-gray-500"
-                      }`}
-                    >
-                      Target
-                    </p>
-                    <p
-                      className={`text-xl font-bold ${
-                        latestShot.points > 0
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {latestShot.points > 0 ? "Hit!" : "Missed"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Voeg een welkomstbericht toe */}
-            <div
-              className={`m-4 p-5 ${
-                darkMode ? "bg-zinc-800" : "bg-white"
-              } rounded-2xl shadow-lg border ${
-                darkMode ? "border-zinc-700" : "border-gray-100"
-              }`}
-            >
-              <h2
-                className={`text-lg font-semibold mb-2 ${
-                  darkMode ? "text-white" : "text-gray-800"
-                }`}
-              >
-                Welcome to Football Coach
-              </h2>
-              <p
-                className={`text-sm ${
-                  darkMode ? "text-zinc-400" : "text-gray-600"
-                }`}
-              >
-                Track your shooting progress and improve your skills with our
-                smart training tools.
-              </p>
-            </div>
-          </>
-        );
+        return <HomeContent setCurrentTab={setCurrentTab} />;
     }
   };
 
@@ -204,20 +53,11 @@ export default function MobileApp() {
       {/* App Header */}
       <div className="p-6 text-white flex justify-between items-center">
         {currentTab === "home" ? (
-          <>
-            <div>
-              <h1 className="text-2xl text-blue-600 font-bold mb-2">
-                Football Coach
-              </h1>
-              <p
-                className={`${darkMode ? "text-white" : "text-black"} text-sm`}
-              >
-                Track your shooting progress
-              </p>
-            </div>
+          <div className="flex justify-between w-full items-center">
+            <h1 className="text-xl font-bold">Football Coach</h1>
             <button
               onClick={() => setShowSettings(true)}
-              className={`${darkMode ? "text-white" : "text-black"} p-2`}
+              className="text-zinc-400"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -230,11 +70,17 @@ export default function MobileApp() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
             </button>
-          </>
+          </div>
         ) : (
           <h1
             className={`text-xl font-bold ${
@@ -368,6 +214,237 @@ export default function MobileApp() {
           </svg>
         </button>
       </div>
+    </div>
+  );
+}
+
+function enableHorizontalDrag() {
+  useEffect(() => {
+    const scrollContainers = document.querySelectorAll(".overflow-x-auto");
+
+    scrollContainers.forEach((container) => {
+      let isDown = false;
+      let startX: number = 0;
+      let scrollLeft: number = 0;
+
+      container.addEventListener("mousedown", (e: Event) => {
+        const mouseEvent = e as MouseEvent;
+        isDown = true;
+        container.classList.add("active");
+        startX = mouseEvent.pageX - (container as HTMLElement).offsetLeft;
+        scrollLeft = (container as HTMLElement).scrollLeft;
+      });
+
+      container.addEventListener("mouseleave", () => {
+        isDown = false;
+        container.classList.remove("active");
+      });
+
+      container.addEventListener("mouseup", () => {
+        isDown = false;
+        container.classList.remove("active");
+      });
+
+      container.addEventListener("mousemove", (e: Event) => {
+        const mouseEvent = e as MouseEvent;
+        if (!isDown) return;
+        mouseEvent.preventDefault();
+        const x = mouseEvent.pageX - (container as HTMLElement).offsetLeft;
+        const walk = (x - startX) * 2;
+        (container as HTMLElement).scrollLeft = scrollLeft - walk;
+      });
+
+      // Touch events voor mobiel
+      container.addEventListener("touchstart", (e: Event) => {
+        const touchEvent = e as TouchEvent;
+        isDown = true;
+        startX =
+          touchEvent.touches[0].pageX - (container as HTMLElement).offsetLeft;
+        scrollLeft = (container as HTMLElement).scrollLeft;
+      });
+
+      container.addEventListener("touchend", () => {
+        isDown = false;
+      });
+
+      container.addEventListener("touchmove", (e: Event) => {
+        const touchEvent = e as TouchEvent;
+        if (!isDown) return;
+        const x =
+          touchEvent.touches[0].pageX - (container as HTMLElement).offsetLeft;
+        const walk = (x - startX) * 2;
+        (container as HTMLElement).scrollLeft = scrollLeft - walk;
+      });
+    });
+  }, []);
+
+  return null;
+}
+
+function HomeContent({ setCurrentTab }: { setCurrentTab: (tab: Tab) => void }) {
+  const { shots, latestShot } = useData();
+  const { darkMode } = useTheme();
+  const [showSettings, setShowSettings] = useState(false);
+
+  // Voeg deze state toe voor vriendverzoeken
+  const [friendRequests, setFriendRequests] = useState([
+    { id: 1, name: "Marco", avatar: "👨‍🦲" },
+    { id: 2, name: "Lisa", avatar: "👩‍🦰" },
+  ]);
+
+  return (
+    <div className="h-[calc(100%-120px)] overflow-y-auto no-scrollbar p-4 pb-20">
+      {/* Voeg horizontale scroll toe aan de navigatie */}
+      <div className="flex space-x-2 mb-4 overflow-x-auto no-scrollbar">
+        <button
+          className="flex-shrink-0 px-3 py-1.5 bg-blue-500 rounded-full text-xs font-medium"
+          onClick={() => setCurrentTab("stats")}
+        >
+          Statistieken
+        </button>
+        <button
+          className="flex-shrink-0 px-3 py-1.5 bg-zinc-700 rounded-full text-xs font-medium"
+          onClick={() => setCurrentTab("football")}
+        >
+          Trainingen
+        </button>
+        <button
+          className="flex-shrink-0 px-3 py-1.5 bg-zinc-700 rounded-full text-xs font-medium"
+          onClick={() => {
+            setCurrentTab("stats");
+            // We need to set the activeTab in CommunityTab to "friends"
+            // This requires creating a state management solution or prop passing
+            // For now, we'll add a workaround using sessionStorage
+            sessionStorage.setItem("communityActiveTab", "friends");
+          }}
+        >
+          Vrienden
+        </button>
+      </div>
+
+      {/* Vriendverzoeken sectie */}
+      {friendRequests.length > 0 && (
+        <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+          <h2 className="text-sm font-bold mb-3">Vriendverzoeken</h2>
+          <div className="space-y-3">
+            {friendRequests.map((friend) => (
+              <div key={friend.id} className="flex items-center">
+                <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center text-xl mr-3">
+                  {friend.avatar}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{friend.name}</p>
+                  <p className="text-xs text-zinc-400">Wil je vriend worden</p>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    className="p-1.5 bg-green-500 rounded"
+                    onClick={() => {
+                      alert(`Je hebt ${friend.name}'s verzoek geaccepteerd!`);
+                      setFriendRequests(
+                        friendRequests.filter((req) => req.id !== friend.id)
+                      );
+                    }}
+                  >
+                    ✓
+                  </button>
+                  <button
+                    className="p-1.5 bg-red-500 rounded"
+                    onClick={() => {
+                      alert(`Je hebt ${friend.name}'s verzoek afgewezen`);
+                      setFriendRequests(
+                        friendRequests.filter((req) => req.id !== friend.id)
+                      );
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dagelijkse Challenge in plaats van laatste schot */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-3">Dagelijkse Challenge</h2>
+        <div>
+          <div className="mb-3">
+            <p className="text-sm font-medium">Precisie Master</p>
+            <p className="text-xs text-zinc-400 mb-2">
+              Scoor 5 bullseyes in één training
+            </p>
+            <div className="w-full bg-zinc-700 rounded-full h-2">
+              <div
+                className="bg-green-500 h-2 rounded-full"
+                style={{ width: "40%" }}
+              ></div>
+            </div>
+            <p className="text-xs text-right mt-1 text-zinc-400">
+              2/5 voltooid
+            </p>
+          </div>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-xs font-medium w-full"
+            onClick={() => setCurrentTab("football")}
+          >
+            Challenge voltooien
+          </button>
+        </div>
+      </div>
+
+      {/* Vrienden activiteit sectie */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-3">Vrienden Activiteit</h2>
+        <div className="space-y-3">
+          <div className="flex items-start">
+            <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center text-lg mr-2">
+              👨‍🦰
+            </div>
+            <div className="flex-1">
+              <p className="text-sm">
+                <span className="font-semibold">Kevin</span> heeft een nieuw
+                record: 82 km/u
+              </p>
+              <p className="text-xs text-zinc-400">30 min geleden</p>
+            </div>
+            <button
+              className="text-xs bg-blue-500 px-2 py-1 rounded"
+              onClick={() => alert("Reactie verzonden naar Kevin")}
+            >
+              👍
+            </button>
+          </div>
+          <div className="flex items-start">
+            <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center text-lg mr-2">
+              👩
+            </div>
+            <div className="flex-1">
+              <p className="text-sm">
+                <span className="font-semibold">Julia</span> heeft een challenge
+                voltooid
+              </p>
+              <p className="text-xs text-zinc-400">2 uur geleden</p>
+            </div>
+            <button
+              className="text-xs bg-blue-500 px-2 py-1 rounded"
+              onClick={() => alert("Reactie verzonden naar Julia")}
+            >
+              👍
+            </button>
+          </div>
+        </div>
+        <button className="w-full text-center text-xs text-blue-400 mt-3">
+          Meer laden...
+        </button>
+      </div>
+
+      {/* Settings overlay behouden we, maar de button verwijderen we */}
+      {showSettings && <SettingsTab onClose={() => setShowSettings(false)} />}
+
+      {/* Voeg de enableHorizontalDrag toe */}
+      {enableHorizontalDrag()}
     </div>
   );
 }

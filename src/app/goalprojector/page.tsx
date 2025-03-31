@@ -332,7 +332,7 @@ function GoalProjectorContent() {
   }, []); // Alleen uitvoeren bij eerste render
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-zinc-900 p-8">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-black p-8">
       <div className="w-[80vw] h-[80vh] relative">
         {/* Confetti overlay - aangepast voor volledige schermgrootte */}
         {showConfetti && (
