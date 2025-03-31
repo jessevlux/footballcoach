@@ -40,6 +40,7 @@ const parseStoredShots = (shotsString: string | null): Shot[] => {
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const [shots, setShots] = useState<Shot[]>([]);
+  const [challenges, setChallenges] = useState<Record<string, any>>({});
 
   // Load initial shots from localStorage
   useEffect(() => {
