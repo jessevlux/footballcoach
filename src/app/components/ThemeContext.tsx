@@ -15,17 +15,17 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("darkMode");
-    setDarkMode(storedTheme === "true");
+    const storedPreference = localStorage.getItem("darkMode");
+    setDarkMode(storedPreference === null ? true : storedPreference === "true");
   }, []);
 
   const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", String(newDarkMode));
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("darkMode", String(newMode));
   };
 
   return (

@@ -512,9 +512,19 @@ export default function FootballTab() {
       {/* Cast Overlay */}
       {showCastOverlay && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-800 rounded-xl p-5 w-full max-w-sm">
+          <div
+            className={`${
+              darkMode ? "bg-zinc-800" : "bg-white"
+            } rounded-xl p-5 w-full max-w-sm`}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Verbind met TV</h2>
+              <h2
+                className={`text-lg font-bold ${
+                  darkMode ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Verbind met TV
+              </h2>
               <button
                 onClick={() => setShowCastOverlay(false)}
                 className="text-zinc-400 hover:text-white"
@@ -536,7 +546,11 @@ export default function FootballTab() {
               </button>
             </div>
 
-            <p className="text-sm text-zinc-400 mb-5">
+            <p
+              className={`text-sm ${
+                darkMode ? "text-zinc-400" : "text-gray-500"
+              } mb-5`}
+            >
               Cast je training naar een groter scherm voor een betere ervaring.
             </p>
 

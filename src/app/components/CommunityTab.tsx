@@ -774,11 +774,15 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
 
         {activeTab === "coaches" && (
           <div className="space-y-4">
-            <div className="bg-zinc-800 rounded-lg p-4">
+            <div className={`${bgColor} rounded-lg p-4`}>
               <div className="flex items-center mb-2">
                 <div className="w-10 h-10 bg-blue-500 rounded-full mr-3"></div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">
+                  <h3
+                    className={`text-sm font-semibold ${
+                      darkMode ? "text-white" : "text-gray-800"
+                    }`}
+                  >
                     Coach Michael
                   </h3>
                   <p className="text-xs text-zinc-400">
@@ -797,11 +801,15 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
               </button>
             </div>
 
-            <div className="bg-zinc-800 rounded-lg p-4">
+            <div className={`${bgColor} rounded-lg p-4`}>
               <div className="flex items-center mb-2">
                 <div className="w-10 h-10 bg-purple-500 rounded-full mr-3"></div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">
+                  <h3
+                    className={`text-sm font-semibold ${
+                      darkMode ? "text-white" : "text-gray-800"
+                    }`}
+                  >
                     Coach Sarah
                   </h3>
                   <p className="text-xs text-zinc-400">
