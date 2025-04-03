@@ -6,8 +6,9 @@ import SettingsTab from "../components/SettingsTab";
 import SensorTab from "../components/SensorTab";
 import CommunityTab from "../components/CommunityTab";
 import FootballTab from "../components/FootballTab";
+import FriendsTab from "../components/FriendsTab";
 
-type Tab = "home" | "stats" | "sensor" | "football";
+type Tab = "home" | "stats" | "sensor" | "football" | "friends";
 
 export default function MobileApp() {
   const { shots, latestShot } = useData();
@@ -23,6 +24,8 @@ export default function MobileApp() {
         return <SensorTab />;
       case "football":
         return <FootballTab />;
+      case "friends":
+        return <FriendsTab />;
       default:
         return <HomeContent setCurrentTab={setCurrentTab} />;
     }
@@ -81,13 +84,33 @@ export default function MobileApp() {
               </svg>
             </button>
           </div>
+        ) : currentTab === "friends" ? (
+          <div className="flex justify-between w-full items-center">
+            <h1 className="text-xl font-bold">Chats</h1>
+            <button
+              className="p-2 bg-zinc-800 rounded-full"
+              onClick={() => {
+                const event = new CustomEvent("toggleFriendsPanel");
+                window.dispatchEvent(event);
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+              </svg>
+            </button>
+          </div>
         ) : (
           <h1
             className={`text-xl font-bold ${
               darkMode ? "text-white" : "text-black"
             }`}
           >
-            {currentTab === "football" && "Football Training"}
+            {currentTab === "football" && "Training"}
             {currentTab === "stats" && "Community"}
             {currentTab === "sensor" && "Sensor"}
           </h1>
@@ -189,9 +212,9 @@ export default function MobileApp() {
           </svg>
         </button>
         <button
-          onClick={() => setCurrentTab("sensor")}
+          onClick={() => setCurrentTab("friends")}
           className={`${
-            currentTab === "sensor"
+            currentTab === "friends"
               ? "text-blue-500"
               : darkMode
               ? "text-zinc-400"
@@ -209,7 +232,7 @@ export default function MobileApp() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
             />
           </svg>
         </button>
@@ -294,32 +317,129 @@ function HomeContent({ setCurrentTab }: { setCurrentTab: (tab: Tab) => void }) {
 
   return (
     <div className="h-[calc(100%-120px)] overflow-y-auto no-scrollbar p-4 pb-20">
-      {/* Voeg horizontale scroll toe aan de navigatie */}
-      <div className="flex space-x-2 mb-4 overflow-x-auto no-scrollbar">
+      {/* Persoonlijke statistieken dashboard */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-3">Jouw Statistieken</h2>
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="bg-zinc-700 rounded-lg p-3 text-center">
+            <p className="text-xs text-zinc-400">Trainingen</p>
+            <p className="text-xl font-bold">24</p>
+          </div>
+          <div className="bg-zinc-700 rounded-lg p-3 text-center">
+            <p className="text-xs text-zinc-400">Gem. Snelheid</p>
+            <p className="text-xl font-bold">
+              76<span className="text-xs">km/u</span>
+            </p>
+          </div>
+          <div className="bg-zinc-700 rounded-lg p-3 text-center">
+            <p className="text-xs text-zinc-400">Precisie</p>
+            <p className="text-xl font-bold">
+              82<span className="text-xs">%</span>
+            </p>
+          </div>
+        </div>
         <button
-          className="flex-shrink-0 px-3 py-1.5 bg-blue-500 rounded-full text-xs font-medium"
+          className="w-full text-center text-xs text-blue-400"
           onClick={() => setCurrentTab("stats")}
         >
-          Statistieken
+          Bekijk alle statistieken
         </button>
-        <button
-          className="flex-shrink-0 px-3 py-1.5 bg-zinc-700 rounded-full text-xs font-medium"
-          onClick={() => setCurrentTab("football")}
-        >
-          Trainingen
-        </button>
-        <button
-          className="flex-shrink-0 px-3 py-1.5 bg-zinc-700 rounded-full text-xs font-medium"
-          onClick={() => {
-            setCurrentTab("stats");
-            // We need to set the activeTab in CommunityTab to "friends"
-            // This requires creating a state management solution or prop passing
-            // For now, we'll add a workaround using sessionStorage
-            sessionStorage.setItem("communityActiveTab", "friends");
-          }}
-        >
-          Vrienden
-        </button>
+      </div>
+
+      {/* Aanbevolen trainingen */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-3">Aanbevolen Trainingen</h2>
+        <div className="space-y-3">
+          <div className="bg-zinc-700 rounded-lg p-3">
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm font-medium">Precisie Training</p>
+              <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
+                15 min
+              </span>
+            </div>
+            <p className="text-xs text-zinc-400 mb-2">
+              Verbeter je schietnauwkeurigheid met deze gerichte oefeningen
+            </p>
+            <button
+              className="w-full bg-blue-500 py-1.5 rounded text-xs font-medium"
+              onClick={() => setCurrentTab("football")}
+            >
+              Start Training
+            </button>
+          </div>
+          <div className="bg-zinc-700 rounded-lg p-3">
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm font-medium">Kracht Training</p>
+              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">
+                20 min
+              </span>
+            </div>
+            <p className="text-xs text-zinc-400 mb-2">
+              Verhoog je schietkracht met deze progressieve oefeningen
+            </p>
+            <button
+              className="w-full bg-blue-500 py-1.5 rounded text-xs font-medium"
+              onClick={() => setCurrentTab("football")}
+            >
+              Start Training
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Voortgang en prestaties */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-3">Jouw Voortgang</h2>
+        <div className="space-y-3">
+          <div>
+            <div className="flex justify-between mb-1">
+              <p className="text-xs">Wekelijkse Trainingen</p>
+              <p className="text-xs font-medium">3/5</p>
+            </div>
+            <div className="w-full bg-zinc-700 rounded-full h-2">
+              <div
+                className="bg-blue-500 h-2 rounded-full"
+                style={{ width: "60%" }}
+              ></div>
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between mb-1">
+              <p className="text-xs">Maandelijks Doel</p>
+              <p className="text-xs font-medium">68%</p>
+            </div>
+            <div className="w-full bg-zinc-700 rounded-full h-2">
+              <div
+                className="bg-green-500 h-2 rounded-full"
+                style={{ width: "68%" }}
+              ></div>
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between mb-1">
+              <p className="text-xs">Precisie Verbetering</p>
+              <p className="text-xs font-medium">+12%</p>
+            </div>
+            <div className="w-full bg-zinc-700 rounded-full h-2">
+              <div
+                className="bg-yellow-500 h-2 rounded-full"
+                style={{ width: "75%" }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dagelijkse tips */}
+      <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+        <h2 className="text-sm font-bold mb-2">Dagelijkse Tip</h2>
+        <div className="bg-zinc-700 rounded-lg p-3">
+          <p className="text-sm italic mb-2">
+            "Focus op je standvoet positie om je schietnauwkeurigheid te
+            verbeteren. Plaats je standvoet naast de bal, niet erachter."
+          </p>
+          <p className="text-xs text-right text-zinc-400">- Coach Michael</p>
+        </div>
       </div>
 
       {/* Vriendverzoeken sectie */}
@@ -366,7 +486,7 @@ function HomeContent({ setCurrentTab }: { setCurrentTab: (tab: Tab) => void }) {
         </div>
       )}
 
-      {/* Dagelijkse Challenge in plaats van laatste schot */}
+      {/* Dagelijkse Challenge */}
       <div className="bg-zinc-800 rounded-lg p-4 mb-4">
         <h2 className="text-sm font-bold mb-3">Dagelijkse Challenge</h2>
         <div>
@@ -440,7 +560,7 @@ function HomeContent({ setCurrentTab }: { setCurrentTab: (tab: Tab) => void }) {
         </button>
       </div>
 
-      {/* Settings overlay behouden we, maar de button verwijderen we */}
+      {/* Settings overlay */}
       {showSettings && <SettingsTab onClose={() => setShowSettings(false)} />}
 
       {/* Voeg de enableHorizontalDrag toe */}

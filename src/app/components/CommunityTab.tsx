@@ -51,7 +51,7 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
   const { shots } = useData();
   const { darkMode } = useTheme();
   const [activeTab, setActiveTab] = useState<
-    "leaderboard" | "challenges" | "friends" | "daily" | "coaches"
+    "leaderboard" | "challenges" | "daily" | "coaches"
   >("leaderboard");
   const [totalScore, setTotalScore] = useState(0);
   const [totalShots, setTotalShots] = useState(0);
@@ -292,170 +292,12 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
     const storedTab = sessionStorage.getItem("communityActiveTab");
     if (storedTab) {
       setActiveTab(
-        storedTab as
-          | "leaderboard"
-          | "challenges"
-          | "friends"
-          | "daily"
-          | "coaches"
+        storedTab as "leaderboard" | "challenges" | "daily" | "coaches"
       );
       // Clear the stored tab to prevent it persisting across refreshes
       sessionStorage.removeItem("communityActiveTab");
     }
   }, []);
-
-  // Update friends tab in CommunityTab om direct de vriendverzoeken van HomeTab te gebruiken
-  const renderFriendsTab = () => {
-    return (
-      <div className="space-y-4">
-        {/* Vriendverzoeken sectie - direct van HomeTab gekopieerd */}
-        {friendRequests.length > 0 && (
-          <div className="bg-zinc-800 rounded-lg p-4 mb-4">
-            <h2 className="text-sm font-bold mb-3">Vriendverzoeken</h2>
-            <div className="space-y-3">
-              {friendRequests.map((friend) => (
-                <div key={friend.id} className="flex items-center">
-                  <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center text-xl mr-3">
-                    {friend.avatar}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{friend.name}</p>
-                    <p className="text-xs text-zinc-400">
-                      Wil je vriend worden
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      className="p-1.5 bg-green-500 rounded"
-                      onClick={() => {
-                        alert(`Je hebt ${friend.name}'s verzoek geaccepteerd!`);
-                        setFriendRequests(
-                          friendRequests.filter((req) => req.id !== friend.id)
-                        );
-                      }}
-                    >
-                      ✓
-                    </button>
-                    <button
-                      className="p-1.5 bg-red-500 rounded"
-                      onClick={() => {
-                        alert(`Je hebt ${friend.name}'s verzoek afgewezen`);
-                        setFriendRequests(
-                          friendRequests.filter((req) => req.id !== friend.id)
-                        );
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Vrienden activiteit sectie - direct van HomeTab gekopieerd */}
-        <div className="bg-zinc-800 rounded-lg p-4 mb-4">
-          <h2 className="text-sm font-bold mb-3">Vrienden Activiteit</h2>
-          <div className="space-y-3">
-            <div className="flex items-start">
-              <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center text-lg mr-2">
-                👨‍🦰
-              </div>
-              <div className="flex-1">
-                <p className="text-sm">
-                  <span className="font-semibold">Kevin</span> heeft een nieuw
-                  record: 82 km/u
-                </p>
-                <p className="text-xs text-zinc-400">30 min geleden</p>
-              </div>
-              <button
-                className="text-xs bg-blue-500 px-2 py-1 rounded"
-                onClick={() => alert("Reactie verzonden naar Kevin")}
-              >
-                👍
-              </button>
-            </div>
-            <div className="flex items-start">
-              <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center text-lg mr-2">
-                👩
-              </div>
-              <div className="flex-1">
-                <p className="text-sm">
-                  <span className="font-semibold">Julia</span> heeft een
-                  challenge voltooid
-                </p>
-                <p className="text-xs text-zinc-400">2 uur geleden</p>
-              </div>
-              <button
-                className="text-xs bg-blue-500 px-2 py-1 rounded"
-                onClick={() => alert("Reactie verzonden naar Julia")}
-              >
-                👍
-              </button>
-            </div>
-          </div>
-          <button className="w-full text-center text-xs text-blue-400 mt-3">
-            Meer laden...
-          </button>
-        </div>
-
-        {/* Bestaande vriendenlijst - behouden */}
-        <div className={`${bgColor} rounded-lg shadow-sm`}>
-          <h3 className="text-sm font-bold p-4 pb-2">Je Vrienden</h3>
-          <div className="divide-y divide-zinc-700">
-            {friends.map((friend) => (
-              <div key={friend.id} className="flex items-center p-3">
-                <div className="relative">
-                  <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center text-xl">
-                    {friend.avatar || "👤"}
-                  </div>
-                  <div
-                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-800 ${
-                      friend.status === "online"
-                        ? "bg-green-500"
-                        : friend.status === "training"
-                        ? "bg-blue-500"
-                        : "bg-gray-500"
-                    }`}
-                  ></div>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium flex items-center">
-                    {friend.name}
-                    <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500/20 text-yellow-400 rounded">
-                      Lvl {friend.level}
-                    </span>
-                  </p>
-                  <p className="text-xs text-zinc-400">
-                    {friend.status === "online"
-                      ? "Online"
-                      : friend.status === "training"
-                      ? "In training"
-                      : `Laatst actief: ${friend.lastActive}`}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    className="p-1.5 bg-blue-500/20 text-blue-400 rounded"
-                    onClick={() => alert(`Challenge sent to ${friend.name}!`)}
-                  >
-                    🏆
-                  </button>
-                  <button
-                    className="p-1.5 bg-green-500/20 text-green-400 rounded"
-                    onClick={() => alert(`Message sent to ${friend.name}!`)}
-                  >
-                    💬
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="h-[calc(100%-120px)] overflow-y-auto no-scrollbar pb-16">
@@ -508,18 +350,6 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
             onClick={() => setActiveTab("challenges")}
           >
             Uitdagingen
-          </button>
-          <button
-            className={`px-3 py-2 text-xs font-medium whitespace-nowrap ${
-              activeTab === "friends"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : darkMode
-                ? "text-zinc-400"
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("friends")}
-          >
-            Vrienden
           </button>
           <button
             className={`px-3 py-2 text-xs font-medium whitespace-nowrap ${
@@ -669,8 +499,6 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
             ))}
           </div>
         )}
-
-        {activeTab === "friends" && renderFriendsTab()}
 
         {activeTab === "daily" && (
           <div className="space-y-4">

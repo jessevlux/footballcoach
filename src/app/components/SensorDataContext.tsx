@@ -20,7 +20,26 @@ type SensorFrame = {
   imu1: ImuData;
 };
 
-type SensorContextType = {
+export type SensorContextType = {
+  connected: boolean;
+  connecting: boolean;
+  connect: () => void;
+  disconnect: () => void;
+  sensorData: {
+    acceleration: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    rotation: {
+      alpha: number;
+      beta: number;
+      gamma: number;
+    };
+  };
+  calibrating: boolean;
+  startCalibration: () => void;
+  cancelCalibration: () => void;
   latestFrame: SensorFrame | null;
   frames: SensorFrame[];
   isConnected: boolean;
