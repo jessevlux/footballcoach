@@ -61,3 +61,13 @@ google-cast-launcher {
   display: inline-block;
   cursor: pointer;
 }
+
+/* Verberg scrollbars voor alle browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Voor Chrome, Safari en Opera */
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* Voor Internet Explorer en Edge */
+  scrollbar-width: none;  /* Voor Firefox */
+}

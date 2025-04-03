@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <DataProvider>
-      <div className="flex flex-col md:flex-row justify-center items-center gap-8 bg-zinc-900 w-full min-h-screen p-8">
+      <div className="flex flex-col md:flex-row justify-center items-center gap-8 bg-zinc-900 w-full min-h-screen p-4 no-scrollbar overflow-hidden">
         <div className="relative">
           <MobileApp />
         </div>

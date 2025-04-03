@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Football Coach",
-  description: "Track your football training progress",
+  title: "Voetbal Coach",
+  description: "Volg je voetbaltraining vooruitgang",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="no-scrollbar">
       <head>
         {/* Google Cast SDK */}
         <script
@@ -35,11 +35,15 @@ export default function RootLayout({
         ></script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased no-scrollbar overflow-hidden`}
       >
         <ThemeProvider>
           <DataProvider>
-            <SensorProvider>{children}</SensorProvider>
+            <SensorProvider>
+              <div className="flex justify-center items-center min-h-screen no-scrollbar overflow-hidden">
+                <div className="w-full overflow-hidden">{children}</div>
+              </div>
+            </SensorProvider>
           </DataProvider>
         </ThemeProvider>
       </body>
