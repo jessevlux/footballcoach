@@ -297,7 +297,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ onClose }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 mb-auto pb-[130px]">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 mb-auto pb-20">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -646,7 +646,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ onClose }) => {
         </div>
 
         {/* Message input */}
-        <div className="p-4 border-t border-zinc-700 flex items-center">
+        <div className="p-4 border-t border-zinc-700 flex items-center bg-zinc-900">
           <input
             type="text"
             inputMode="text"
@@ -679,39 +679,6 @@ const GroupChat: React.FC<GroupChatProps> = ({ onClose }) => {
               />
             </svg>
           </button>
-        </div>
-
-        {/* Toetsenbord */}
-        <div className="border-t border-zinc-700 py-1 px-2 bg-zinc-800 grid grid-cols-10 gap-1 text-center">
-          {["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].map((key) => (
-            <div key={key} className="p-2 bg-zinc-700 rounded">
-              {key}
-            </div>
-          ))}
-          <div className="col-span-10 grid grid-cols-9 gap-1 mt-1">
-            {["A", "S", "D", "F", "G", "H", "J", "K", "L"].map((key) => (
-              <div key={key} className="p-2 bg-zinc-700 rounded">
-                {key}
-              </div>
-            ))}
-          </div>
-          <div className="col-span-10 grid grid-cols-8 gap-1 mt-1">
-            <div className="p-1 bg-zinc-600 rounded col-span-1 flex items-center justify-center">
-              ⇧
-            </div>
-            {["Z", "X", "C", "V", "B", "N", "M"].map((key) => (
-              <div key={key} className="p-2 bg-zinc-700 rounded">
-                {key}
-              </div>
-            ))}
-          </div>
-          <div className="col-span-10 grid grid-cols-3 gap-1 mt-1">
-            <div className="p-2 bg-zinc-600 rounded">123</div>
-            <div className="p-2 bg-zinc-700 rounded col-span-1">😀</div>
-            <div className="p-2 bg-zinc-700 rounded col-span-1 text-xs flex items-center justify-center">
-              Ruimte
-            </div>
-          </div>
         </div>
       </div>
     </div>

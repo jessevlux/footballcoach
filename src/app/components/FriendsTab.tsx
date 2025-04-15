@@ -74,7 +74,7 @@ export default function FriendsTab() {
       status: "training",
       level: 15,
       lastActive: "3 uur geleden",
-      lastMessage: "Goed gedaan met die challenge!",
+      lastMessage: "Goed gedaan met die uitdaging!",
       unread: 0,
     },
     {
@@ -197,10 +197,7 @@ export default function FriendsTab() {
   return (
     <>
       {showGroupChat ? (
-        <div
-          className="fixed inset-0 z-50 bg-zinc-900 overflow-hidden"
-          style={{ height: "100%" }}
-        >
+        <div className="fixed inset-0 z-50 bg-zinc-900 overflow-hidden">
           <GroupChat onClose={() => setShowGroupChat(false)} />
         </div>
       ) : (

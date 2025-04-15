@@ -10,7 +10,7 @@ type Challenge = {
   description: string;
   targetScore: number;
   participants: number;
-  difficulty: "Easy" | "Medium" | "Hard";
+  difficulty: "Gemakkelijk" | "Gemiddeld" | "Moelijk";
   isActive: boolean;
   progress: number;
 };
@@ -55,7 +55,7 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
   >("leaderboard");
   const [totalScore, setTotalScore] = useState(0);
   const [totalShots, setTotalShots] = useState(0);
-  const [averageAccuracy, setAverageAccuracy] = useState("N/A");
+  const [averageAccuracy, setAverageAccuracy] = useState("N/B");
 
   // Hardcoded leaderboard met jou bovenaan
   const leaderboard = useMemo(() => {
@@ -68,7 +68,7 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
     return [
       {
         id: "you",
-        name: "You",
+        name: "Jij",
         score: playerPoints,
         accuracy: "Bullseye",
         shots: shots.length,
@@ -77,13 +77,13 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
         id: "u1",
         name: "Alex",
         score: Math.round(playerPoints * 0.9),
-        accuracy: "Good",
+        accuracy: "Goed",
         shots: 42,
       },
-      { id: "u2", name: "Sam", score: 142, accuracy: "Good", shots: 51 },
-      { id: "u3", name: "Jordan", score: 138, accuracy: "Fair", shots: 38 },
+      { id: "u2", name: "Sam", score: 142, accuracy: "Goed", shots: 51 },
+      { id: "u3", name: "Jordan", score: 138, accuracy: "Redelijk", shots: 38 },
       { id: "u4", name: "Taylor", score: 125, accuracy: "Bullseye", shots: 45 },
-      { id: "u5", name: "Casey", score: 118, accuracy: "Fair", shots: 62 },
+      { id: "u5", name: "Casey", score: 118, accuracy: "Redelijk", shots: 62 },
     ];
   }, [shots]);
 
@@ -92,30 +92,30 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
     {
       id: "c1",
       title: "Bullseye Master",
-      description: "Score 5 bullseyes in a row",
+      description: "Scoor 5 bullseyes achter elkaar",
       targetScore: 50,
       participants: 124,
-      difficulty: "Hard",
+      difficulty: "Moelijk",
       isActive: false,
       progress: 3,
     },
     {
       id: "c2",
       title: "Corner Specialist",
-      description: "Hit all 4 corners of the goal",
+      description: "Raak alle 4 hoeken van het doel",
       targetScore: 20,
       participants: 256,
-      difficulty: "Medium",
+      difficulty: "Gemiddeld",
       isActive: false,
       progress: 2,
     },
     {
       id: "c3",
       title: "Speed Demon",
-      description: "Score 10 points with shots over 80 km/h",
+      description: "Scoor 10 punten met schoten boven de 80 km/u",
       targetScore: 10,
       participants: 189,
-      difficulty: "Easy",
+      difficulty: "Gemakkelijk",
       isActive: false,
       progress: 5,
     },
@@ -220,18 +220,12 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
       );
       const avgAccuracyValue = accuracySum / shots.length;
 
-      let accuracyLabel = "Poor";
+      let accuracyLabel = "Slecht";
       if (avgAccuracyValue > 3.5) accuracyLabel = "Bullseye";
-      else if (avgAccuracyValue > 2.5) accuracyLabel = "Good";
-      else if (avgAccuracyValue > 1.5) accuracyLabel = "Good";
-      else if (avgAccuracyValue > 0.5) accuracyLabel = "Fair";
+      else if (avgAccuracyValue > 2.5) accuracyLabel = "Goed";
+      else if (avgAccuracyValue > 1.5) accuracyLabel = "Redelijk";
 
       setAverageAccuracy(accuracyLabel);
-
-      // Update your score in the leaderboard
-      leaderboard[0].score = Math.max(350, score + 200);
-      leaderboard[0].accuracy = accuracyLabel;
-      leaderboard[0].shots = shots.length;
     }
   }, [shots]);
 
@@ -249,9 +243,9 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
     const challenge = challenges.find((c) => c.id === challengeId);
     if (challenge) {
       if (!challenge.isActive) {
-        alert(`You joined the "${challenge.title}" challenge!`);
+        alert(`Je hebt de "${challenge.title}" uitdaging gekozen!`);
       } else {
-        alert(`You left the "${challenge.title}" challenge.`);
+        alert(`Je hebt de "${challenge.title}" uitdaging verlaten.`);
       }
     }
   };
@@ -304,7 +298,7 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
       <div className="p-4">
         {/* User Stats Card */}
         <div className={`${bgColor} rounded-lg p-4 mb-6 shadow-sm`}>
-          <h2 className="text-xl font-bold mb-3">Your Stats</h2>
+          <h2 className="text-xl font-bold mb-3">Jouw Statistieken</h2>
           <div className="grid grid-cols-3 gap-3">
             <div className={`${bgColorDarker} p-3 rounded-lg text-center`}>
               <p className="text-sm">Score</p>
@@ -432,9 +426,9 @@ export default function CommunityTab({ isMobile = false }: CommunityTabProps) {
                     <h3 className="text-base font-bold">{challenge.title}</h3>
                     <span
                       className={`px-2 py-0.5 text-xs rounded ${
-                        challenge.difficulty === "Easy"
+                        challenge.difficulty === "Gemakkelijk"
                           ? "bg-green-500/20 text-green-400"
-                          : challenge.difficulty === "Medium"
+                          : challenge.difficulty === "Gemiddeld"
                           ? "bg-yellow-500/20 text-yellow-400"
                           : "bg-red-500/20 text-red-400"
                       }`}
